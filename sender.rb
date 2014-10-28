@@ -7,11 +7,13 @@ conn = Bunny.new
 conn.start
 
 ch = conn.create_channel
+x  = ch.fanout("logs")
 
-q = ch.queue('hello')
-10000.times do |a|
-  ch.default_exchange.publish("#{"Hello World!#{a}th"}", :routing_key => q.name)
+
+100_000.times do |a|
+  msg = "#{Time.now.to_i}"
+  x.publish(msg)
+  puts " [x] Sent #{msg}"
 end
-puts 'sent!'
 
 conn.close
